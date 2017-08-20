@@ -6,9 +6,8 @@ import './interfaces/ISmartToken.sol';
 /*
     Crowdsale v0.1
 
-    The crowdsale version of the smart token controller, allows contributing ether in exchange for Bancor tokens
-    The price remains fixed for the entire duration of the crowdsale
-    Note that 20% of the contributions are the Bancor token's reserve
+    The crowdsale version of the smart token controller, allows contributing ether in exchange for DAB founder tokens
+    The price remains fixed for the entire duration of the token sale
 */
 contract CrowdsaleController is SmartTokenController, SafeMath {
     uint256 public constant DURATION = 14 days;                 // crowdsale duration
