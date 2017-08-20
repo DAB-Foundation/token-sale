@@ -22,6 +22,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
     uint256 public endTime = 0;                     // crowdsale end time (in seconds)
     uint256 public totalEtherCap = 5000 ether;      // total ether contribution cap
     uint256 public totalEtherContributed = 0;       // ether contributed so far
+    uint256 public maxContribution = 5 ether;       // max ether to contribute
     uint256 public totalDepositTokenRedeemed = 0;       // founder redeemed deposit token
     uint256 public totalCreditTokenRedeemed = 0;       // founder redeemed credit token
     address public beneficiary = 0x0;               // address to receive all ether contributions
@@ -55,6 +56,12 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
     // verifies that an amount is greater than zero
     modifier validAmount(uint256 _amount){
         require(_amount > 0);
+        _;
+    }
+
+    // verifies that an amount is greater than zero
+    modifier validContribution(uint256 _amount){
+        require(_amount <= maxContribution);
         _;
     }
 
@@ -198,8 +205,9 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
     */
     function processContribution() private
         active
-        etherCapNotReached(msg.value)
         validGasPrice
+        validContribution(msg.value)
+        etherCapNotReached(msg.value)
         returns (uint256 amount)
     {
         uint256 tokenAmount = computeReturn(msg.value);
