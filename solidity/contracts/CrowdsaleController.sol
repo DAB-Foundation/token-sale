@@ -29,7 +29,6 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
     uint256 public totalDepositTokenRedeemed = 0;               // founder redeemed deposit token
     uint256 public totalCreditTokenRedeemed = 0;                // founder redeemed credit token
     address public beneficiary = 0x0;                           // address to receive all ether contributions
-    address public cashier = 0x0;                               // cashier address
     mapping (address => Founder) public founders;               // founders
 
     ISmartToken public depositToken = ISmartToken(0x0);         // depositToken address
@@ -97,7 +96,6 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
     modifier validRedeem() {
         assert(address(depositToken) != 0x0);
         assert(address(creditToken) != 0x0);
-        assert(cashier != 0x0);
         _;
     }
 
@@ -130,20 +128,6 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
     }
 
     /**
-        @dev set the cashier address
-
-        @param _cashier    the cashier address
-
-    */
-    function setCashier(address _cashier)
-        public
-        ownerOnly
-        validAddress(_cashier)
-    {
-        cashier = _cashier;
-    }
-
-    /**
         @dev convert the DAB founder token to deposit token at ratio of 1:1
 
         @param _amount    the amount to conversion
@@ -154,7 +138,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
         validAmount(_amount)
     {
         token.destroy(msg.sender, _amount);
-        assert(depositToken.transferFrom(cashier, msg.sender, _amount));
+        assert(depositToken.transfer(msg.sender, _amount));
         totalDepositTokenRedeemed = safeAdd(totalDepositTokenRedeemed, _amount);
 
         ConversionToDeposit(msg.sender, _amount);
@@ -171,7 +155,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
         validAmount(_amount)
     {
         token.destroy(msg.sender, _amount);
-        assert(depositToken.transferFrom(cashier, msg.sender, _amount));
+        assert(depositToken.transfer(msg.sender, _amount));
         totalCreditTokenRedeemed = safeAdd(totalCreditTokenRedeemed, _amount);
 
         ConversionToCredit(msg.sender, _amount);
