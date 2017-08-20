@@ -7,7 +7,7 @@ var beneficiary = '0xA86929f2722B1929dcFe935Ad8C3b90ccda411fd';
 
 module.exports = async (deployer) => {
   await deployer.deploy(FounderToken, 'DAB Founder Token', 'DFT', 18);
-  await deployer.deploy(CrowdsaleController, FounderToken.address, inMinutes, beneficiary);
+  await deployer.deploy(CrowdsaleController, FounderToken.address, startTime, beneficiary);
 
   await FounderToken.deployed().then(async (instance) => {
     await instance.transferOwnership(CrowdsaleController.address);
