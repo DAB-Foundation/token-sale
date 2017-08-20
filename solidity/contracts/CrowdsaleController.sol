@@ -18,22 +18,22 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
     uint256 public constant TOKEN_PRICE_N = 1;                  // initial price in wei (numerator)
     uint256 public constant TOKEN_PRICE_D = 100;                // initial price in wei (denominator)
     uint256 public constant MAX_GAS_PRICE = 50000000000 wei;    // maximum gas price for contribution transactions
+    uint256 public constant TOTAL_ETHER_CAP = 5000 ether;       // total ether contribution cap
+    uint256 public constant MAX_CONTRIBUTION = 5 ether;         // max ether a founder can contribute
 
     string public version = '0.1';
 
-    uint256 public startTime = 0;                   // crowdsale start time (in seconds)
-    uint256 public endTime = 0;                     // crowdsale end time (in seconds)
-    uint256 public totalEtherCap = 5000 ether;      // total ether contribution cap
-    uint256 public totalEtherContributed = 0;       // ether contributed so far
-    uint256 public maxContribution = 5 ether;       // max ether to contribute
-    uint256 public totalDepositTokenRedeemed = 0;       // founder redeemed deposit token
-    uint256 public totalCreditTokenRedeemed = 0;       // founder redeemed credit token
-    address public beneficiary = 0x0;               // address to receive all ether contributions
-    address public cashier = 0x0;                        // cashier address
-    mapping (address => Founder) public founders;
+    uint256 public startTime = 0;                               // crowdsale start time (in seconds)
+    uint256 public endTime = 0;                                 // crowdsale end time (in seconds)
+    uint256 public totalEtherContributed = 0;                   // ether contributed so far
+    uint256 public totalDepositTokenRedeemed = 0;               // founder redeemed deposit token
+    uint256 public totalCreditTokenRedeemed = 0;                // founder redeemed credit token
+    address public beneficiary = 0x0;                           // address to receive all ether contributions
+    address public cashier = 0x0;                               // cashier address
+    mapping (address => Founder) public founders;               // founders
 
-    ISmartToken public depositToken = ISmartToken(0x0);               // depositToken address
-    ISmartToken public creditToken = ISmartToken(0x0);                // creditToken address
+    ISmartToken public depositToken = ISmartToken(0x0);         // depositToken address
+    ISmartToken public creditToken = ISmartToken(0x0);          // creditToken address
 
     // triggered on each contribution
     event Contribution(address indexed _contributor, uint256 _amount, uint256 _return);
@@ -65,7 +65,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
 
     // verifies that an founder does not contribute more than max contribution
     modifier validFounder(){
-        require(safeAdd(founders[msg.sender].contributed, msg.value) <= maxContribution);
+        require(safeAdd(founders[msg.sender].contributed, msg.value) <= MAX_CONTRIBUTION);
         _;
     }
 
@@ -89,7 +89,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
 
     // ensures that we didn't reach the ether cap
     modifier etherCapNotReached(uint256 _contribution) {
-        assert(safeAdd(totalEtherContributed, _contribution) <= totalEtherCap);
+        assert(safeAdd(totalEtherContributed, _contribution) <= TOTAL_ETHER_CAP);
         _;
     }
 
