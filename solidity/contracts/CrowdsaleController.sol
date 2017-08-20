@@ -150,6 +150,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
     {
         token.destroy(msg.sender, _amount);
         depositToken.transferFrom(cashier, msg.sender, _amount);
+        totalDepositTokenRedeemed = safeAdd(totalDepositTokenRedeemed, _amount);
 
         ConversionToDeposit(msg.sender, _amount);
     }
@@ -166,6 +167,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
     {
         token.destroy(msg.sender, _amount);
         depositToken.transferFrom(cashier, msg.sender, _amount);
+        totalCreditTokenRedeemed = safeAdd(totalCreditTokenRedeemed, _amount);
 
         ConversionToCredit(msg.sender, _amount);
     }
