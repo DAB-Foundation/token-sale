@@ -10,6 +10,10 @@ import './interfaces/ISmartToken.sol';
     The price remains fixed for the entire duration of the token sale
 */
 contract CrowdsaleController is SmartTokenController, SafeMath {
+    struct Founder{
+        uint256 contributed;
+    }
+
     uint256 public constant DURATION = 14 days;                 // crowdsale duration
     uint256 public constant TOKEN_PRICE_N = 1;                  // initial price in wei (numerator)
     uint256 public constant TOKEN_PRICE_D = 100;                // initial price in wei (denominator)
@@ -26,6 +30,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
     uint256 public totalCreditTokenRedeemed = 0;       // founder redeemed credit token
     address public beneficiary = 0x0;               // address to receive all ether contributions
     address public cashier = 0x0;                        // cashier address
+    mapping (address => Founder) public founders;
 
     ISmartToken public depositToken = ISmartToken(0x0);               // depositToken address
     ISmartToken public creditToken = ISmartToken(0x0);                // creditToken address
@@ -58,9 +63,9 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
         _;
     }
 
-    // verifies that an amount is greater than zero
-    modifier validContribution(uint256 _amount){
-        require(_amount <= maxContribution);
+    // verifies that an founder do not contribute more than mac contribution
+    modifier validFounder(){
+        require(safeAdd(founders[msg.sender].contributed, msg.value) <= maxContribution);
         _;
     }
 
@@ -149,7 +154,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
         validAmount(_amount)
     {
         token.destroy(msg.sender, _amount);
-        depositToken.transferFrom(cashier, msg.sender, _amount);
+        assert(depositToken.transferFrom(cashier, msg.sender, _amount));
         totalDepositTokenRedeemed = safeAdd(totalDepositTokenRedeemed, _amount);
 
         ConversionToDeposit(msg.sender, _amount);
@@ -166,7 +171,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
         validAmount(_amount)
     {
         token.destroy(msg.sender, _amount);
-        depositToken.transferFrom(cashier, msg.sender, _amount);
+        assert(depositToken.transferFrom(cashier, msg.sender, _amount));
         totalCreditTokenRedeemed = safeAdd(totalCreditTokenRedeemed, _amount);
 
         ConversionToCredit(msg.sender, _amount);
@@ -207,7 +212,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
     function processContribution() private
         active
         validGasPrice
-        validContribution(msg.value)
+        validFounder
         etherCapNotReached(msg.value)
         returns (uint256 amount)
     {
@@ -215,6 +220,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
         assert(beneficiary.send(msg.value)); // transfer the ether to the beneficiary account
         totalEtherContributed = safeAdd(totalEtherContributed, msg.value); // update the total contribution amount
         token.issue(msg.sender, tokenAmount); // issue new funds to the contributor in the smart token
+        founders[msg.sender].contributed = safeAdd(founders[msg.sender].contributed, msg.value);
 
         Contribution(msg.sender, msg.value, tokenAmount);
         return tokenAmount;

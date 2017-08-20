@@ -4,7 +4,7 @@ module.exports = {
       host: "localhost",
       port: 8545,
       network_id: "4",
-      gas: 4500000,
+      gas: 4000000,
       gasPrice: 50000000000
     },
 
@@ -12,7 +12,7 @@ module.exports = {
       host: "localhost",
       port: 8545,
       network_id: "*",
-      gas: 4500000,
+      gas: 4000000,
       gasPrice: 20000000000
     },
 
@@ -20,15 +20,15 @@ module.exports = {
       host: "localhost",
       port: 8545,
       network_id: 1,
-      gas: 4500000,
+      gas: 4000000,
       gasPrice: 20000000000
     },
 
     dev: {
       host: "localhost",
       port: 8545,
-      network_id: "1",
-      gas: 4500000,
+      network_id: "*",
+      gas: 4000000,
       gasPrice: 20000000000
     },
 
@@ -36,7 +36,7 @@ module.exports = {
       host: "localhost",
       port: 8545,
       network_id: 10,
-      gas: 4500000,
+      gas: 4000000,
       gasPrice: 24000000000
     }
   }
