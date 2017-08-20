@@ -63,7 +63,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
         _;
     }
 
-    // verifies that an founder do not contribute more than mac contribution
+    // verifies that an founder does not contribute more than max contribution
     modifier validFounder(){
         require(safeAdd(founders[msg.sender].contributed, msg.value) <= maxContribution);
         _;
