@@ -16,7 +16,7 @@ contract CrowdsaleController is SmartTokenController, SafeMath {
 
     uint256 public constant DURATION = 14 days;                 // crowdsale duration
     uint256 public constant TOKEN_PRICE_N = 1;                  // initial price in wei (numerator)
-    uint256 public constant TOKEN_PRICE_D = 100;                // initial price in wei (denominator)
+    uint256 public constant TOKEN_PRICE_D = 80;                // initial price in wei (denominator)
     uint256 public constant MAX_GAS_PRICE = 50000000000 wei;    // maximum gas price for contribution transactions
     uint256 public constant TOTAL_ETHER_CAP = 5000 ether;       // total ether contribution cap
     uint256 public constant MAX_CONTRIBUTION = 5 ether;         // max ether a founder can contribute
